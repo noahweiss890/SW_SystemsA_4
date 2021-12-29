@@ -1,6 +1,6 @@
 CC = gcc
 AR = ar
-FLAGS =-Wall - g 
+FLAGS = -Wall -g 
 OBJECTS = main.o nodes.o algo.o
 
 all: graph
@@ -12,6 +12,6 @@ nodes.o: nodes.c nodes.h
 	$(CC) $(FLAGS) -c nodes.c
 algo.o: algo.c algo.h nodes.h
 	$(CC) $(FLAGS) -c algo.c
-.PHONY: clean
+.PHONY: all clean
 clean:
-	rm -f connections *.o 
+	rm -f graph *.o
