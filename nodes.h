@@ -11,7 +11,7 @@ typedef struct GRAPH_NODE_ {
 
 void delete_node(int id);
 pnode get_node(pnode *head, int x);
-void add_node(char *str);
+void add_node(pnode *head);
 
 
 
