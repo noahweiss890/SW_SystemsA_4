@@ -1,7 +1,11 @@
 #ifndef GRAPH_NODE_
 #define GRAPH_NODE_
 
-#include "edges.h"
+typedef struct edge_ {
+    int weight;
+    pnode endpoint;
+    pedge next;
+} edge, *pedge;
 
 typedef struct GRAPH_NODE_ {
     int node_num;
@@ -12,8 +16,5 @@ typedef struct GRAPH_NODE_ {
 void delete_node(int id);
 pnode get_node(pnode *head, int x);
 void add_node(pnode *head);
-
-
-
 
 #endif
