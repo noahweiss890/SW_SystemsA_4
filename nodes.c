@@ -13,7 +13,3 @@ pnode get_node(pnode *head, int x){
     // Recur for remaining list
     return search((*head)->next, x);
 }
-}
-
-
-
