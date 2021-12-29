@@ -9,7 +9,7 @@ typedef struct edge_ {
     pedge next;
 } edge, *pedge;
 
-void add_edge(int w, pnode dest, pedge nextEdge);
+void add_edge(int, pnode dest, pedge nextEdge);
 void delete_edge(pnode dest);
 
 #endif
