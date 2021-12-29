@@ -1,8 +1,18 @@
 #include <stdio.h>
 #include "nodes.h"
+#include <ctype.h>
 
 void build_graph_cmd(pnode *head) {
-
+    int v = (int)getchar();
+    getchar(); //skip space
+    for (int i = 0; i < v; i++)
+    {
+        char x = getchar();
+        getchar(); //skip space
+        while(x == 'n'){
+            add_node((*head));
+        }
+    }
 }
 
 void insert_node_cmd(pnode *head) {

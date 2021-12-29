@@ -1,5 +1,5 @@
 #include <stdio.h>
- #include "edges.h"
+#include "nodes.h"
 
  pnode get_node(pnode *head, int x) {
      pnode node;
@@ -12,5 +12,9 @@
         return *head;
  
     // Recur for remaining list
-    return search((*head)->next, x);
+    return get_node((*head)->next, x);
+}
+
+void add_node(pnode *head){
+    return NULL;
 }
