@@ -47,6 +47,7 @@ pnode create_node(pnode *head) {
         }
         prev = prev->next;
         dest = getchar();
+        getchar();
     }
     ungetc(dest, stdin);
     return new_node;
