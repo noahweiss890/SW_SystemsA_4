@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "edges.h"
 
-pnode get_node(pnode *head, int x){
+pnode get_node(pnode *head, int x) {
     pnode node;
     // Base case
     if (head == NULL)
