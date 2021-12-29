@@ -13,7 +13,8 @@ typedef struct GRAPH_NODE_ {
     pnode next;
 } node, *pnode;
 
-pnode get_node(pnode *head, int x);
-void add_node(pnode *head);
+void add_node(pnode *head, pnode new_node);
+pnode get_node(pnode *head, int id);
+pnode create_node(pnode *node);
 
 #endif
