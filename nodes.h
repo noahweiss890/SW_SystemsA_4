@@ -1,20 +1,22 @@
-#ifndef GRAPH_NODE_
-#define GRAPH_NODE_
+#ifndef NODES_H
+#define NODES_H
+
+typedef struct GRAPH_NODE_ *pnode;;
 
 typedef struct edge_ {
     int weight;
     pnode endpoint;
-    pedge next;
+    struct edge_ *next;
 } edge, *pedge;
 
 typedef struct GRAPH_NODE_ {
     int node_num;
     pedge edges;
-    pnode next;
+    struct GRAPH_NODE_ *next;
 } node, *pnode;
 
-void add_node(pnode *head, pnode new_node);
+// void add_node(pnode *head, pnode new_node);
 pnode get_node(pnode *head, int id);
-pnode create_node(pnode *node);
+void create_node(pnode *node);
 
 #endif
