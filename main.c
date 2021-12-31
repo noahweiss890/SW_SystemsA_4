@@ -7,39 +7,30 @@ int main() {
     char chosen_option;
     chosen_option = getchar();
 
-    while(chosen_option != '\n' && chosen_option != EOF) {
+    while(chosen_option == 'A' || chosen_option == 'B' || chosen_option == 'D' || chosen_option == 'S' || chosen_option == 'T') {
         getchar();
         if(chosen_option == 'A') {
-            // deleteGraph_cmd(&head);
-            printf("\nhead in %p", head);
-            build_graph_cmd(&head);
-            printf("\nhead in %p", head);
-            printGraph_cmd(&head);
             deleteGraph_cmd(&head);
             head = NULL;
+            build_graph_cmd(&head);
             printGraph_cmd(&head);
-            // head = NULL;
-            printf("\nhead in %p", head);
-            return 0;
         }
         else if(chosen_option == 'B') {
             insert_node_cmd(&head);
-            // printGraph_cmd(&head);
-            // return 0;
-            // printf("\nDONEZA");
-            // exit(0);
+            printGraph_cmd(&head);
         }
         else if(chosen_option == 'D') {
-            // delete_node_cmd(&head);
+            delete_node_cmd(&head);
+            printGraph_cmd(&head);
+            // return 0;
         }
         else if(chosen_option == 'S') {
-            // shortsPath_cmd(&head);
+            // shortsPath_cmd(head);
         }
-        else {
-            return 0;
+        else if(chosen_option == 'T') {
+            // TSP_cmd(head);
         }
         chosen_option = getchar();
-        printGraph_cmd(&head);
     }
     deleteGraph_cmd(&head);
     printf("\nhead: %p", head);
