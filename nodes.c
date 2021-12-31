@@ -46,20 +46,3 @@ void create_node(pnode *head) {
     ungetc(' ', stdin);
     ungetc(dest, stdin);
 }
-
-void add_node(pnode *head, pnode new_node) {
-    printf("before head: %p\n", head);
-    if(head == NULL) {
-        // printf("head: %p\n", head);
-        head = new_node;
-        printf("new head: %p\n", head);
-        // exit(0);
-    }
-    else {
-        pnode curr = *head;
-        while(curr->next != NULL) {
-            curr = curr->next;
-        }
-        curr->next = new_node;
-    }
-}

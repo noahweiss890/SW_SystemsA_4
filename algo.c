@@ -43,7 +43,6 @@ void build_graph_cmd(pnode *head) {
 }
 
 void insert_node_cmd(pnode *head) { // inserts a new node into the graph
-
     int id = (int)getchar() - '0';
     getchar();
     pnode old_node = get_node(head, id); // get the node with that id if it exists
@@ -55,6 +54,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
         }
         new_node->node_num = id;
         new_node->edges = NULL;
+        new_node->next = NULL;
         pedge prev;
         char dest = getchar();
         getchar();
@@ -135,43 +135,69 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
 }
 
 void delete_node_cmd(pnode *head) {
+    int counter = 0;
+    if(*head == NULL){
+        return;
+    }
     pnode del_n = get_node(head, (int)getchar() - '0');
     getchar(); //skip spaces
-    pnode curr = *head;
-    pnode temp = NULL; //used to update the linked list
-    int del_id = 0;
-    pedge del_e = NULL;
-    while (curr->next != NULL) { //go through all nodes in graph
-        if (curr->next == del_n) { //this node's next is the node we are deleting so we need to update the linked list
-            temp = curr->next;
-            curr->next = temp->next;
-        }
-        //current node's next is not the node to be deleted, must go through edges to see if its an endpoint
-        pedge currEdgeHead = curr->next->edges; //edges of the node
-        pedge tempEdge = NULL;
-        int del_w = 0;
-        pnode del_end = NULL;
-        while (currEdgeHead->next != NULL) {
-            if (currEdgeHead->next->endpoint == del_n) { //need to delete this edge
-                tempEdge = currEdgeHead->next;
-                currEdgeHead->next = tempEdge->next;
-                free(tempEdge);
+    pnode next_node = NULL;
+    if((*head) == del_n){ //first node in list is one to delete
+        next_node = (*head)->next;
+        free(*head);
+        counter++;
+        *head = next_node;
+    }
+    else {
+        pnode curr = *head;
+        while (curr->next != NULL) { //go through all nodes in graph
+            if (curr->next == del_n) { //this node's next is the node we are deleting so we need to update the linked list
+                curr->next = curr->next->next;
             }
-            currEdgeHead = currEdgeHead->next; //increment the head
+            curr = curr->next;
         }
-        curr = curr->next;
+    }
+    pnode curr_node = *head;
+    pedge curr_edge = NULL;
+    pedge next_edge = NULL;
+    while(curr_node != NULL) {
+        if (curr_node->edges != NULL) {
+            if (curr_node->edges->endpoint == del_n) {
+                next_edge = curr_node->edges->next;
+                free(curr_node->edges);
+                counter++;
+                curr_node->edges = next_edge;
+            }
+            else {
+                curr_edge = curr_node->edges; //edges of the node
+                while (curr_edge->next != NULL) {
+                    if (curr_edge->next->endpoint == del_n) { //need to delete this edge
+                        // printf("\ngot here to delete %d", curr_edge->endpoint->node_num);
+                        next_edge = curr_edge->next->next;
+                        free(curr_edge->next);
+                        counter++;
+                        curr_edge->next = next_edge;
+                        // printGraph_cmd(head);
+                        break;
+                    }
+                    curr_edge = curr_edge->next; //increment the head
+                }
+            }
+        }
+        curr_node = curr_node->next;
     }
     //delete all edges of the node
-    int del_w = 0;
-    pnode del_end = NULL;
-    pedge edgeHead = del_n->edges;
-    pedge tempEdge = NULL;
-    while (edgeHead->next != NULL) { 
-        tempEdge = edgeHead->next;
-        edgeHead->next = tempEdge->next;
-        free(tempEdge);
+    pedge curr_edge1 = del_n->edges;
+    pedge next_edge1 = NULL;
+    while (curr_edge1 != NULL) { 
+        next_edge1 = curr_edge1->next;
+        free(curr_edge1);
+        curr_edge1 = next_edge1;
+        counter++;
     }
     free(del_n); //delete_node(del_n);
+    counter++;
+    printf("\ncount: %d", counter);
 }
 
 void printGraph_cmd(pnode *head) { // prints the graph
@@ -189,6 +215,10 @@ void printGraph_cmd(pnode *head) { // prints the graph
 }
 
 void deleteGraph_cmd(pnode* head) { // deletes the whole graph and frees all of the allocated memory
+    if(*head == NULL){
+        return;
+    }
+    int counter = 0; //to keep track of deallocation
     pnode curr_node = *head;
     pnode next_node;
     while (curr_node != NULL) {
@@ -197,13 +227,18 @@ void deleteGraph_cmd(pnode* head) { // deletes the whole graph and frees all of 
         while(curr_edge != NULL) {
             next_edge = curr_edge->next;
             free(curr_edge);
+            counter++;
             curr_edge = next_edge;
         }
+        curr_edge = NULL;
         next_node = curr_node->next;
         free(curr_node);
+        counter++;
         curr_node = next_node;
     }
-    printf("\nhead in %p", head);
+    curr_node = NULL;
+    printf("\ncounter is: %d", counter);
+    //printf("\nhead in %p", head);
 }
 
 void shortsPath_cmd(pnode head) {
