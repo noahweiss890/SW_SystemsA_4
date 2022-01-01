@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <limits.h>
 #include "nodes.h"
 
 void build_graph_cmd(pnode *head) {
@@ -242,8 +243,81 @@ void deleteGraph_cmd(pnode* head) { // deletes the whole graph and frees all of 
 }
 
 void shortsPath_cmd(pnode head) {
-    return;
+    //receive source and dest from buffer
+    int src = getchar();
+    getchar();
+    int dest = getchar();
+    getchar();
+    //go through nodes and change all priority to inf and source priority to 0
+    pnode curr = head;
+    while(curr != NULL){
+        if(curr->node_num != src){
+            curr->priority = INT_MAX;
+        }
+        curr->priority = 0;
+    }
+    //add all nodes to pq
+    curr = head;
+    pnode pq_head = curr;
+    curr = curr->next;
+    while(curr != NULL){
+        push_priority(&pq_head, curr->node_num, curr->priority);
+    }
+    while(pq_head != NULL){
+        int pop_id = pop_priority(&pq_head);
+        pnode curr_node = get_node(head, pop_id);
+        if(curr_node->priority == INT_MAX){
+            printf(-1);
+        }
+        pedge curr_edge = curr_node->edges;
+        //pedge next_edge = NULL;
+        while(curr_edge != NULL){
+            pnode curr_node_neighbor = curr_edge->endpoint;
+            if(curr_node_neighbor->priority > (curr_node->priority + curr_edge->weight)){
+                //remove from pq meaning unlink from list but dont free: remove(curr_node_neighbor)
+                
+                //update endpoint's priority
+                curr_edge->endpoint->priority = curr_node->priority + curr_edge->weight; 
+                //push back into pq with new priority
+                push_priority(&pq_head, curr_edge->endpoint->node_num, curr_edge->endpoint->priority);
+            }
+            curr_edge = curr_edge->next;
+        }
+    }
+    pnode dest_node = get_node(head, dest);
+    printf(dest_node->priority);
 }
+
+void push_priority(pnode *head, int id, int priority){
+    pnode curr = (*head);
+    pnode node_to_enter = get_node(head, id);
+    //the node has priority over the head so add to begining 
+    if((*head)->priority > priority){
+        node_to_enter->next = *head;
+        *head = node_to_enter;
+    }
+    else{
+        //go through list and find where to add it 
+        while(curr->next != NULL && curr->next->priority < priority){
+            curr = curr->next;
+        }
+        //either end of list or proper place to push node
+        node_to_enter->next = curr->next;
+        curr->next = node_to_enter;
+        }
+}
+
+int pop_priority(pnode *head){
+    pnode popped = *head;
+    (*head) = (*head)->next;
+    int popped_id = popped->node_num;
+    free(popped);
+    return popped_id;
+}
+
+// int peek_priority(pnode *head){
+//     return (*head)->node_num;
+// }
 
 void TSP_cmd(pnode head) {
     return;
