@@ -283,7 +283,7 @@ void shortsPath_cmd(pnode head) {
         curr = head;
         //find node with smallest priority
         while(curr != NULL) {
-            if(curr->priority < min_p && curr->visited == 0) {
+            if(curr->priority <= min_p && curr->visited == 0) {
                 min_p = curr->priority;
                 smallest = curr;
             }
