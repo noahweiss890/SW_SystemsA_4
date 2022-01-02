@@ -5,10 +5,11 @@
 #include "nodes.h"
 #include "algo.h"
 
+//builds a graph of nodes and edges
 void build_graph_cmd(pnode *head) {
-    int v = (int)getchar() - '0';
+    int v = (int)getchar() - '0'; //receive amount of nodes from buffer
     getchar(); //skip space
-    if(v == 0) {
+    if(v == 0) { //if no nodes, return
         return;
     }
     pnode temp = (pnode)malloc(sizeof(node));
@@ -20,17 +21,21 @@ void build_graph_cmd(pnode *head) {
     temp->next = NULL;
     *head = temp;
     pnode curr = temp;
+    //create v amount of empty nodes (v was received from buffer)
     for (int i = 1; i < v; i++) {
         pnode new_node = (pnode)malloc(sizeof(node));
         if(new_node == NULL) {
             printf("Not enough memory!");
             exit(0);
         }
+        //assign id to be i and next to be null
         new_node->node_num = i;
         new_node->next = NULL;
         curr->next = new_node;
-        curr = curr->next;
+
+        curr = curr->next; //increment curr
     }
+    //now get n value v amount of times
     for (int i = 0; i < v; i++) {
         char x = getchar();
         getchar(); //skip space
@@ -39,6 +44,7 @@ void build_graph_cmd(pnode *head) {
             x = getchar();
             getchar(); //skip space
         }
+        //if x is not 'n', put back in buffer
         ungetc(' ', stdin);
         ungetc(x, stdin);
     }
@@ -48,8 +54,8 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
     int id = (int)getchar() - '0';
     getchar();
     pnode old_node = get_node(head, id); // get the node with that id if it exists
-    if(old_node == NULL) { // does a node with that id already exist
-        pnode new_node = (pnode)malloc(sizeof(node));
+    if(old_node == NULL) { // does a node with that id already exist, if so, create new node and assign the parameters
+        pnode new_node = (pnode)malloc(sizeof(node)); 
         if(new_node == NULL) {
             printf("Not enough memory!");
             exit(0);
@@ -61,6 +67,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
         char dest = getchar();
         getchar();
         while(isdigit(dest)) {
+            //get weight from buffer
             int weight = (int)getchar() - '0';
             getchar();
             pedge new_edge = (pedge)malloc(sizeof(edge));
@@ -68,6 +75,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
                 printf("Not enough memory!");
                 exit(0);
             }
+             //assign parameters
             new_edge->endpoint = get_node(head, (int)dest - '0');
             new_edge->weight = weight;
             if(new_node->edges == NULL) {
@@ -78,14 +86,17 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
                 prev->next = new_edge;
                 prev = prev->next;
             }
-            dest = getchar();
+            dest = getchar(); //get dest from buffer
             getchar();
         }
+        // puts space and char back in buffer because its on to new command
         ungetc(' ', stdin);
         ungetc(dest, stdin);
+        //if linked list is empty, make new node the head
         if(*head == NULL) {
             *head = new_node;
         }
+        //link the new node to the linked list of nodes
         else {
             pnode curr_node = *head;
             while(curr_node->next != NULL) {
@@ -272,7 +283,7 @@ void shortsPath_cmd(pnode head) {
         curr = head;
         //find node with smallest priority
         while(curr != NULL) {
-            if(curr->priority < min_p && curr->visited == 0) {
+            if(curr->priority <= min_p && curr->visited == 0) {
                 min_p = curr->priority;
                 smallest = curr;
             }
