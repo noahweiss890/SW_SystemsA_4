@@ -13,26 +13,22 @@ int main() {
             deleteGraph_cmd(&head);
             head = NULL;
             build_graph_cmd(&head);
-            printGraph_cmd(&head);
         }
         else if(chosen_option == 'B') {
             insert_node_cmd(&head);
-            printGraph_cmd(&head);
         }
         else if(chosen_option == 'D') {
             delete_node_cmd(&head);
-            printGraph_cmd(&head);
-            // return 0;
         }
         else if(chosen_option == 'S') {
-            // shortsPath_cmd(head);
+            shortsPath_cmd(head);
         }
         else if(chosen_option == 'T') {
-            // TSP_cmd(head);
+            TSP_cmd(head);
         }
         chosen_option = getchar();
     }
     deleteGraph_cmd(&head);
-    printf("\nhead: %p", head);
+    // printf("\nhead: %p", head);
     return 0;
 }

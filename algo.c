@@ -199,7 +199,7 @@ void delete_node_cmd(pnode *head) {
     }
     free(del_n); //delete_node(del_n);
     counter++;
-    printf("\ncount: %d", counter);
+    // printf("\ncount: %d", counter);
 }
 
 void printGraph_cmd(pnode *head) { // prints the graph
@@ -303,5 +303,117 @@ void shortsPath_cmd(pnode head) {
 }   
 
 void TSP_cmd(pnode head) {
-    return;
+    int size = (int)getchar() - '0';
+    getchar();
+    int cities[size];
+    for(int i = 0; i < size; i++) {
+        cities[i] = (int)getchar() - '0';
+        getchar();
+    }
+    int min_weight = INT_MAX;
+    for(int i = 0; i < size; i++) {
+        int new_cities[size-1];
+        int j = 0;
+        for(int k = 0; k < size; k++) {
+            if(i != k) {
+                new_cities[j++] = cities[k];
+            }
+        }
+        int weight = tsp_helper(head, cities[i], new_cities, size-1);
+        if(weight == -1) {
+            continue;
+        }
+        if(weight < min_weight) {
+            min_weight = weight;
+        }
+    }
+    if(min_weight != INT_MAX) {
+        printf("TSP shortest path: %d \n", min_weight);
+    }
+    else {
+        printf("TSP shortest path: -1 \n");
+    }
+}
+
+int get_shortest_path_dist(pnode head, int src, int dest) {
+    pnode curr = head;
+    int counter = 0;
+    //change priority of every node to max int except for source node priority is zero
+    while(curr != NULL) {
+        if(curr->node_num != src){
+            curr->priority = INT_MAX;
+        }
+        else{
+            curr->priority = 0;
+        }
+        curr->visited = 0;
+        counter++;
+        curr = curr->next;
+    }
+    int i = 0;
+    while(i < counter){
+        pnode smallest = NULL;
+        int min_p = INT_MAX;
+        curr = head;
+        //find node with smallest priority
+        while(curr != NULL) {
+            if(curr->priority <= min_p && curr->visited == 0) {
+                min_p = curr->priority;
+                smallest = curr;
+            }
+            curr = curr->next;
+        }
+        //update tag visited 
+        smallest->visited = 1;
+        //if the smallest priority is int_max, then there is no path betweent the src and dest node
+        if(smallest->priority == INT_MAX){
+            return -1;
+        }
+        //if the node smallest priority is the dest node then we've found our shortest path 
+        if(smallest->node_num == dest){
+            return smallest->priority;
+        }
+        pedge curr_edge = smallest->edges;
+        //go through edges to check priority of neighboring nodes
+        while(curr_edge != NULL){
+            if(curr_edge->endpoint->priority > smallest->priority + curr_edge->weight){ //relaxing
+                curr_edge->endpoint->priority = smallest->priority + curr_edge->weight;
+            }
+            curr_edge = curr_edge->next;
+        }
+        i++;
+    }
+    return -1;
+}
+
+int tsp_helper(pnode head, int src, int *cities, int size) {
+    if(size == 0) {
+        return 0;
+    }
+    int min_weight = INT_MAX;
+    for(int i = 0; i < size; i++) {
+        int new_cities[size-1];
+        int j = 0;
+        for(int k = 0; k < size; k++) {
+            if(i != k) {
+                new_cities[j++] = cities[k];
+            }
+        }
+        int edge_weight = get_shortest_path_dist(head, src, cities[i]);
+        if(edge_weight == -1) {
+            continue;
+        }
+        int res = tsp_helper(head, cities[i], new_cities, size-1);
+        if(res == -1) {
+            continue;
+        }
+        int weight = edge_weight + res;
+        if(weight < min_weight) {
+            min_weight = weight;
+        }
+    }
+    if(min_weight == INT_MAX) {
+        return -1;
+    }
+    return min_weight;
 }
