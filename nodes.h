@@ -17,7 +17,6 @@ typedef struct GRAPH_NODE_ {
     int visited;
 } node, *pnode;
 
-// void add_node(pnode *head, pnode new_node);
 pnode get_node(pnode *head, int id);
 void create_node(pnode *node);
 
