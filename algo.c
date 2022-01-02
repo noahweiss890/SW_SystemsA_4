@@ -59,7 +59,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
         if(new_node == NULL) {
             printf("Not enough memory!");
             exit(0);
-        }
+        } //assign new_node id and edges and next to be null
         new_node->node_num = id;
         new_node->edges = NULL;
         new_node->next = NULL;
@@ -78,11 +78,13 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
              //assign parameters
             new_edge->endpoint = get_node(head, (int)dest - '0');
             new_edge->weight = weight;
+            //if first edge to link, make it the head 
             if(new_node->edges == NULL) {
                 new_node->edges = new_edge;
                 prev = new_edge;
             }
             else {
+                //link this edge to the end of the linked list
                 prev->next = new_edge;
                 prev = prev->next;
             }
@@ -110,6 +112,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
         
         pedge curr_edge = old_node->edges;
         pedge next_edge;
+        //free the edges of the node so they can be replaced
         while(curr_edge != NULL) {
             next_edge = curr_edge->next;
             free(curr_edge);
@@ -120,28 +123,30 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
         pedge prev = NULL;
         char dest = getchar();
         getchar();
-        while(isdigit(dest)) {
-            int weight = (int)getchar() - '0';
-            getchar();
+        while(isdigit(dest)) { //as long as the input received is a digit
+            int weight = (int)getchar() - '0'; //get weight from buffer
+            getchar(); //skip spaces
             pedge new_edge = (pedge)malloc(sizeof(edge));
             if(new_edge == NULL) {
                 printf("Not enough memory!");
                 exit(0);
             }
+            //assign parameters
             new_edge->endpoint = get_node(head, (int)dest - '0');
             new_edge->weight = weight;
             new_edge->next = NULL;
-            if(old_node->edges == NULL) {
-                old_node->edges = new_edge;
+            if(old_node->edges == NULL) { //old node had no edges
+                old_node->edges = new_edge; //make new edge head of the list 
                 prev = new_edge;
             }
-            else {
+            else { //link to end of linked list
                 prev->next = new_edge;
                 prev = prev->next;
             }
-            dest = getchar();
-            getchar();
+            dest = getchar(); //receive dest from buffer
+            getchar(); //skip spaces
         }
+        //if value received is not a digit, return it to buffer
         ungetc(' ', stdin);
         ungetc(dest, stdin);
     }
@@ -210,7 +215,6 @@ void delete_node_cmd(pnode *head) {
     }
     free(del_n); //delete_node(del_n);
     counter++;
-    // printf("\ncount: %d", counter);
 }
 
 void printGraph_cmd(pnode *head) { // prints the graph
@@ -253,7 +257,6 @@ void deleteGraph_cmd(pnode* head) { // deletes the whole graph and frees all of 
         curr_node = next_node;
     }
     curr_node = NULL;
-    //printf("\ncounter is: %d", counter);
 }
 
 void shortsPath_cmd(pnode head) {
@@ -313,39 +316,41 @@ void shortsPath_cmd(pnode head) {
     }
 }   
 
+//finds the shortest path distance that visists specific nodes on the graph
 void TSP_cmd(pnode head) {
-    int size = (int)getchar() - '0';
-    getchar();
-    int cities[size];
-    for(int i = 0; i < size; i++) {
+    int size = (int)getchar() - '0'; //get size of "list" of cities from buffer
+    getchar(); //skip spaces
+    int cities[size]; //declare size of list of nodes to visit
+    for(int i = 0; i < size; i++) { //loop size amount of times im order to add the nodes to be visited to cities
         cities[i] = (int)getchar() - '0';
-        getchar();
+        getchar(); //skip spaces
     }
-    int min_weight = INT_MAX;
-    for(int i = 0; i < size; i++) {
+    int min_weight = INT_MAX; //originally declare min_weight to be the highest it can be
+    for(int i = 0; i < size; i++) { //runs through every option of starter nodes
         int new_cities[size-1];
         int j = 0;
         for(int k = 0; k < size; k++) {
-            if(i != k) {
-                new_cities[j++] = cities[k];
+            if(i != k) { //j moves forward only when something is inserted, meaning i != k
+                new_cities[j++] = cities[k]; //copy over to new array
             }
         }
         int weight = tsp_helper(head, cities[i], new_cities, size-1);
-        if(weight == -1) {
+        if(weight == -1) { //no path exists
             continue;
         }
-        if(weight < min_weight) {
+        if(weight < min_weight) { //we have found a smaller weight so update min_weight
             min_weight = weight;
         }
     }
-    if(min_weight != INT_MAX) {
+    if(min_weight != INT_MAX) { //if min_weight was changed throughout the function, that is the shortest path for TSP
         printf("TSP shortest path: %d \n", min_weight);
     }
-    else {
+    else { //if min_weight was not changed, no such path exists that visits each node in cities
         printf("TSP shortest path: -1 \n");
     }
 }
 
+//TSP helper function that ginds the shortest path between two nodes. similar to shortest_path_cmd
 int get_shortest_path_dist(pnode head, int src, int dest) {
     pnode curr = head;
     int counter = 0;
@@ -397,11 +402,13 @@ int get_shortest_path_dist(pnode head, int src, int dest) {
     return -1;
 }
 
+//TSP recursive helper function
 int tsp_helper(pnode head, int src, int *cities, int size) {
-    if(size == 0) {
+    if(size == 0) { //base case, no more options to check
         return 0;
     }
     int min_weight = INT_MAX;
+    //now checking all options with specific starter node
     for(int i = 0; i < size; i++) {
         int new_cities[size-1];
         int j = 0;
@@ -411,20 +418,21 @@ int tsp_helper(pnode head, int src, int *cities, int size) {
             }
         }
         int edge_weight = get_shortest_path_dist(head, src, cities[i]);
-        if(edge_weight == -1) {
+        if(edge_weight == -1) { //no path between src and dest, go to next iteration
             continue;
         }
-        int res = tsp_helper(head, cities[i], new_cities, size-1);
+        int res = tsp_helper(head, cities[i], new_cities, size-1); //call recursively to find shortest path visiting each node in new_cities
         if(res == -1) {
             continue;
         }
-        int weight = edge_weight + res;
-        if(weight < min_weight) {
-            min_weight = weight;
+        int weight = edge_weight + res; //distance from starter node to first node in new_cities + cost of path visiting each node in new_cities
+        if(weight < min_weight) { //found a smaller cost
+            min_weight = weight; //update weight
         }
     }
+    //min_weight was not changed so no path exists that covers every node in new_cities
     if(min_weight == INT_MAX) {
         return -1;
     }
-    return min_weight;
+    return min_weight; //return TSP shortes path
 }
