@@ -15,7 +15,6 @@ typedef struct GRAPH_NODE_ {
     struct GRAPH_NODE_ *next;
     int priority;
     int visited;
-    pnode prev;
 } node, *pnode;
 
 // void add_node(pnode *head, pnode new_node);
