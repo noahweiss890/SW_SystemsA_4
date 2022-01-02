@@ -5,7 +5,7 @@ OBJECTS = main.o nodes.o algo.o
 
 all: graph
 graph: $(OBJECTS) 
-	$(CC) $(FLAGS) -o graph $(OJBJECTS)
+	$(CC) $(FLAGS) -o graph $(OBJECTS)
 main.o: main.c algo.h 
 	$(CC) $(FLAGS) -c main.c
 nodes.o: nodes.c nodes.h 
