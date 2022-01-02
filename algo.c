@@ -217,8 +217,8 @@ void delete_node_cmd(pnode *head) {
     counter++;
 }
 
-void printGraph_cmd(pnode *head) { // prints the graph
-    pnode curr_node = *head;
+void printGraph_cmd(pnode head) { // prints the graph
+    pnode curr_node = head;
     while(curr_node != NULL) {
         printf("\nNode %d:\tEdges:\t", curr_node->node_num);
         pedge curr_edge = curr_node->edges;
