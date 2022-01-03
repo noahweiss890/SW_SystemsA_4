@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include "nodes.h"
 
 //returns node from linked list with given id 
@@ -17,22 +16,24 @@ pnode get_node(pnode *head, int id) {
 
 //creates the edges of the node with weights 
 void create_node(pnode *head) {
-    int new_node_id = (int)getchar() - '0'; //receive which node to work with from buffer
-    getchar(); //skip spaces
+    int new_node_id;
+    scanf("%d ", &new_node_id); //receive which node to work with from buffer
     pnode new_node = get_node(head, new_node_id); //get node with that ID
     new_node->edges = NULL;
     pedge prev = NULL; //in order to add on to end of edge linked list
-    char dest = getchar(); //get dest from buffer
-    getchar(); //skip space
-    while(isdigit(dest)) { //until we've gotten to a value that is not a digit
-        int weight = (int)getchar() - '0'; //get weight from buffer
-        getchar(); //skip space
+    int dest, is_int = 0;
+    if(scanf("%d ", &dest)) { // if the input is an int
+        is_int = 1;
+    }
+    while(is_int) { //until we've gotten to a value that is not a digit
+        int weight;
+        scanf("%d ", &weight); //get weight from buffer
         pedge new_edge = (pedge)malloc(sizeof(edge)); //create new edge
         if(new_node == NULL) {
             printf("Not enough memory!");
             exit(0);
         }
-        new_edge->endpoint = get_node(head, (int)dest - '0'); //assign endpoint of edge to be the node with id dest
+        new_edge->endpoint = get_node(head, dest); //assign endpoint of edge to be the node with id dest
         new_edge->weight = weight; //set weight of edge to be weight we received from buffer
         if(new_node->edges == NULL) { //if no edges already, make new_edge the head of edges
             new_node->edges = new_edge;
@@ -42,10 +43,9 @@ void create_node(pnode *head) {
             prev->next = new_edge;
             prev = prev->next;
         }
-        dest = getchar();
-        getchar();
+        is_int = 0;
+        if(scanf("%d ", &dest)) { // if the input is an int
+            is_int = 1;
+        }
     }
-    //once we have received a value that is not a digit, put back in buffer because next command
-    ungetc(' ', stdin);
-    ungetc(dest, stdin);
 }

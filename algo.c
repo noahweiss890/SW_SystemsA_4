@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <limits.h>
 #include "nodes.h"
 #include "algo.h"
 
 //builds a graph of nodes and edges
 void build_graph_cmd(pnode *head) {
-    int v = (int)getchar() - '0'; //receive amount of nodes from buffer
-    getchar(); //skip space
+    int v;
+    scanf("%d ", &v); //receive amount of nodes from buffer
     if(v == 0) { //if no nodes, return
         return;
     }
@@ -51,32 +50,35 @@ void build_graph_cmd(pnode *head) {
 }
 
 void insert_node_cmd(pnode *head) { // inserts a new node into the graph
-    int id = (int)getchar() - '0';
-    getchar();
+    int id;
+    scanf("%d ", &id);
     pnode old_node = get_node(head, id); // get the node with that id if it exists
     if(old_node == NULL) { // does a node with that id already exist, if so, create new node and assign the parameters
         pnode new_node = (pnode)malloc(sizeof(node)); 
         if(new_node == NULL) {
             printf("Not enough memory!");
             exit(0);
-        } //assign new_node id and edges and next to be null
+        }
+        //assign new_node id and edges and next to be null
         new_node->node_num = id;
         new_node->edges = NULL;
         new_node->next = NULL;
         pedge prev;
-        char dest = getchar();
-        getchar();
-        while(isdigit(dest)) {
+        int dest, is_int = 0;
+        if(scanf("%d ", &dest)) { // if the input is an int
+            is_int = 1;
+        }
+        while(is_int) {
             //get weight from buffer
-            int weight = (int)getchar() - '0';
-            getchar();
+            int weight;
+            scanf("%d ", &weight);
             pedge new_edge = (pedge)malloc(sizeof(edge));
             if(new_edge == NULL) {
                 printf("Not enough memory!");
                 exit(0);
             }
              //assign parameters
-            new_edge->endpoint = get_node(head, (int)dest - '0');
+            new_edge->endpoint = get_node(head, dest);
             new_edge->weight = weight;
             //if first edge to link, make it the head 
             if(new_node->edges == NULL) {
@@ -88,12 +90,11 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
                 prev->next = new_edge;
                 prev = prev->next;
             }
-            dest = getchar(); //get dest from buffer
-            getchar();
+            is_int = 0;
+            if(scanf("%d ", &dest)) { // if the input is an int
+                is_int = 1;
+            }
         }
-        // puts space and char back in buffer because its on to new command
-        ungetc(' ', stdin);
-        ungetc(dest, stdin);
         //if linked list is empty, make new node the head
         if(*head == NULL) {
             *head = new_node;
@@ -118,21 +119,22 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
             free(curr_edge);
             curr_edge = next_edge;
         }
-        
         old_node->edges = NULL;
         pedge prev = NULL;
-        char dest = getchar();
-        getchar();
-        while(isdigit(dest)) { //as long as the input received is a digit
-            int weight = (int)getchar() - '0'; //get weight from buffer
-            getchar(); //skip spaces
+        int dest, is_digit = 0;
+        if(scanf("%d ", &dest)) {
+            is_digit = 1;
+        }
+        while(is_digit) { //as long as the input received is a digit
+            int weight;
+            scanf("%d ", &weight);
             pedge new_edge = (pedge)malloc(sizeof(edge));
             if(new_edge == NULL) {
                 printf("Not enough memory!");
                 exit(0);
             }
             //assign parameters
-            new_edge->endpoint = get_node(head, (int)dest - '0');
+            new_edge->endpoint = get_node(head, dest);
             new_edge->weight = weight;
             new_edge->next = NULL;
             if(old_node->edges == NULL) { //old node had no edges
@@ -143,28 +145,25 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
                 prev->next = new_edge;
                 prev = prev->next;
             }
-            dest = getchar(); //receive dest from buffer
-            getchar(); //skip spaces
+            is_digit = 0;
+            if(scanf("%d ", &dest)) {
+                is_digit = 1;
+            }
         }
-        //if value received is not a digit, return it to buffer
-        ungetc(' ', stdin);
-        ungetc(dest, stdin);
     }
 }
 
 //deletes a specific node and all edges entering or exiting the node
 void delete_node_cmd(pnode *head) {
-    int counter = 0;
     if(*head == NULL){
         return;
     }
-    pnode del_n = get_node(head, (int)getchar() - '0');
-    getchar(); //skip spaces
+    int to_del;
+    scanf("%d ", &to_del);
+    pnode del_n = get_node(head, to_del);
     pnode next_node = NULL;
     if((*head) == del_n){ //first node in list is one to delete so unlink
         next_node = (*head)->next;
-        //free(*head);
-        counter++;
         *head = next_node;
     }
     else {
@@ -185,7 +184,6 @@ void delete_node_cmd(pnode *head) {
             if (curr_node->edges->endpoint == del_n) { //unlink and free edge
                 next_edge = curr_node->edges->next;
                 free(curr_node->edges);
-                counter++;
                 curr_node->edges = next_edge;
             }
             else {
@@ -194,7 +192,6 @@ void delete_node_cmd(pnode *head) {
                     if (curr_edge->next->endpoint == del_n) { //need to free and unlink this edge
                         next_edge = curr_edge->next->next;
                         free(curr_edge->next);
-                        counter++;
                         curr_edge->next = next_edge;
                         break; //wont have another edge with same endpoint so can break 
                     }
@@ -211,10 +208,8 @@ void delete_node_cmd(pnode *head) {
         next_edge1 = curr_edge1->next;
         free(curr_edge1);
         curr_edge1 = next_edge1;
-        counter++;
     }
     free(del_n); //delete_node(del_n);
-    counter++;
 }
 
 void printGraph_cmd(pnode head) { // prints the graph
@@ -235,7 +230,6 @@ void deleteGraph_cmd(pnode* head) { // deletes the whole graph and frees all of 
     if(*head == NULL){
         return;
     }
-    int counter = 0; //to keep track of deallocation
     pnode curr_node = *head;
     pnode next_node;
     //go through nodes of graph
@@ -246,14 +240,12 @@ void deleteGraph_cmd(pnode* head) { // deletes the whole graph and frees all of 
         while(curr_edge != NULL) {
             next_edge = curr_edge->next;
             free(curr_edge);
-            counter++;
             curr_edge = next_edge;
         }
         //unlink and free the node
         curr_edge = NULL;
         next_node = curr_node->next;
         free(curr_node);
-        counter++;
         curr_node = next_node;
     }
     curr_node = NULL;
@@ -261,10 +253,8 @@ void deleteGraph_cmd(pnode* head) { // deletes the whole graph and frees all of 
 
 void shortsPath_cmd(pnode head) {
     //receive source and dest from buffer
-    int src = (int)getchar() - '0';
-    getchar();
-    int dest = (int)getchar() - '0';
-    getchar();
+    int src, dest;
+    scanf("%d %d ", &src, &dest);
     pnode curr = head;
     int counter = 0;
     //change priority of every node to max int except for source node priority is zero
@@ -318,12 +308,11 @@ void shortsPath_cmd(pnode head) {
 
 //finds the shortest path distance that visists specific nodes on the graph
 void TSP_cmd(pnode head) {
-    int size = (int)getchar() - '0'; //get size of "list" of cities from buffer
-    getchar(); //skip spaces
+    int size;
+    scanf("%d ", &size);
     int cities[size]; //declare size of list of nodes to visit
     for(int i = 0; i < size; i++) { //loop size amount of times im order to add the nodes to be visited to cities
-        cities[i] = (int)getchar() - '0';
-        getchar(); //skip spaces
+        scanf("%d ", cities + i);
     }
     int min_weight = INT_MAX; //originally declare min_weight to be the highest it can be
     for(int i = 0; i < size; i++) { //runs through every option of starter nodes
