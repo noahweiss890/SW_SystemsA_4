@@ -29,5 +29,6 @@ int main() {
         chosen_option = getchar(); // input the next option
     }
     deleteGraph_cmd(&head); // before exiting the program deallocate all of the memory in the graph (nodes and edges)
+    head = NULL;
     return 0;
 }
