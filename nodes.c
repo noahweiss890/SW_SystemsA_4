@@ -45,8 +45,9 @@ void create_node(pnode *head) {
             prev = prev->next;
         }
         is_int = 0;
-        if(scanf("%d ", &dest)) { // if the input is an int
+        if(scanf("%d ", &dest) == 1){
             is_int = 1;
         }
+
     }
 }
