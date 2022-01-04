@@ -35,6 +35,7 @@ void create_node(pnode *head) {
         }
         new_edge->endpoint = get_node(head, dest); //assign endpoint of edge to be the node with id dest
         new_edge->weight = weight; //set weight of edge to be weight we received from buffer
+        new_edge->next = NULL;
         if(new_node->edges == NULL) { //if no edges already, make new_edge the head of edges
             new_node->edges = new_edge;
             prev = new_edge;

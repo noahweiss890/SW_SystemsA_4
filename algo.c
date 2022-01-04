@@ -18,6 +18,9 @@ void build_graph_cmd(pnode *head) {
     }
     temp->node_num = 0;
     temp->next = NULL;
+    temp->edges = NULL;
+    temp->priority = 0;
+    temp->visited = 0;
     *head = temp;
     pnode curr = temp;
     //create v amount of empty nodes (v was received from buffer)
@@ -30,6 +33,9 @@ void build_graph_cmd(pnode *head) {
         //assign id to be i and next to be null
         new_node->node_num = i;
         new_node->next = NULL;
+        new_node->edges = NULL;
+        new_node->priority = 0;
+        new_node->visited = 0;
         curr->next = new_node;
 
         curr = curr->next; //increment curr
@@ -63,6 +69,8 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
         new_node->node_num = id;
         new_node->edges = NULL;
         new_node->next = NULL;
+        new_node->priority = 0;
+        new_node->visited = 0;
         pedge prev;
         int dest, is_int = 0;
         if(scanf("%d ", &dest)) { // if the input is an int
@@ -80,6 +88,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
              //assign parameters
             new_edge->endpoint = get_node(head, dest);
             new_edge->weight = weight;
+            new_edge->next = NULL;
             //if first edge to link, make it the head 
             if(new_node->edges == NULL) {
                 new_node->edges = new_edge;
