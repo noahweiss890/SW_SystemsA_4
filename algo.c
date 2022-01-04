@@ -41,7 +41,6 @@ void build_graph_cmd(pnode *head) {
         curr = curr->next; //increment curr
     }
     //now get n value v amount of times
-    for (int i = 0; i < v; i++) {
         char x = getchar();
         getchar(); //skip space
         while (x == 'n') {
@@ -52,7 +51,6 @@ void build_graph_cmd(pnode *head) {
         //if x is not 'n', put back in buffer
         ungetc(' ', stdin);
         ungetc(x, stdin);
-    }
 }
 
 void insert_node_cmd(pnode *head) { // inserts a new node into the graph
@@ -73,7 +71,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
         new_node->visited = 0;
         pedge prev;
         int dest, is_int = 0;
-        if(scanf("%d ", &dest)) { // if the input is an int
+        if(scanf("%d ", &dest) == 1) { // if the input is an int
             is_int = 1;
         }
         while(is_int) {
@@ -100,7 +98,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
                 prev = prev->next;
             }
             is_int = 0;
-            if(scanf("%d ", &dest)) { // if the input is an int
+            if(scanf("%d ", &dest) == 1) { // if the input is an int
                 is_int = 1;
             }
         }
@@ -131,7 +129,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
         old_node->edges = NULL;
         pedge prev = NULL;
         int dest, is_digit = 0;
-        if(scanf("%d ", &dest)) {
+        if(scanf("%d ", &dest) == 1) {
             is_digit = 1;
         }
         while(is_digit) { //as long as the input received is a digit
@@ -155,7 +153,7 @@ void insert_node_cmd(pnode *head) { // inserts a new node into the graph
                 prev = prev->next;
             }
             is_digit = 0;
-            if(scanf("%d ", &dest)) {
+            if(scanf("%d ", &dest) == 1) {
                 is_digit = 1;
             }
         }
